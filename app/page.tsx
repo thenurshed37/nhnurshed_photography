@@ -4,43 +4,68 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+const allSlideshowImages = [
+  '/photos/street/1.jpg', '/photos/street/2.jpg', '/photos/street/3.jpg',
+  '/photos/street/4.jpg', '/photos/street/5.jpg',
+  '/photos/blackandwhite/1.jpg', '/photos/blackandwhite/2.jpg', '/photos/blackandwhite/3.jpg',
+  '/photos/blackandwhite/4.jpg', '/photos/blackandwhite/5.jpg',
+  '/photos/documentary/1.jpg', '/photos/documentary/2.jpg', '/photos/documentary/3.jpg',
+  '/photos/portrait/1.jpg', '/photos/portrait/2.jpg', '/photos/portrait/3.jpg',
+  '/photos/colors/1.jpg', '/photos/colors/2.jpg', '/photos/colors/3.jpg',
+  '/photos/abstract/1.jpg', '/photos/abstract/2.jpg', '/photos/abstract/3.jpg',
+  '/photos/series1/1.jpg', '/photos/series2/1.jpg', '/photos/series3/1.jpg',
+  '/photos/series4/1.jpg', '/photos/series5/1.jpg',
+];
+
+function shuffleArray<T>(array: T[]): T[] {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 export default function Home() {
+  const [images] = useState(() => shuffleArray(allSlideshowImages));
   const [currentImage, setCurrentImage] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
-  
-  // Sample images for slideshow (from your galleries)
-  const slideshowImages = [
-    '/photos/street/1.jpg',
-    '/photos/blackandwhite/1.jpg',
-    '/photos/documentary/1.jpg',
-    '/photos/portrait/1.jpg',
-    '/photos/colors/1.jpg',
-    '/photos/abstract/1.jpg',
-  ];
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % slideshowImages.length);
-    }, 4000); // Change every 4 seconds
-    
+      setCurrentImage((prev) => (prev + 1) % images.length);
+    }, 3500);
     return () => clearInterval(interval);
-  }, []);
+  }, [images.length]);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
+  const menuItems = [
+    { label: 'Galleries', href: '/galleries' },
+    { label: 'Prints', href: '/prints' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+  ];
 
   return (
     <main className="h-screen w-screen overflow-hidden bg-white relative">
+
       {/* Background Slideshow */}
       <div className="absolute inset-0 z-0">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentImage}
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.15 }}
+            animate={{ opacity: 0.2 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1.5 }}
+            transition={{ duration: 2 }}
             className="absolute inset-0"
           >
-            <img 
-              src={slideshowImages[currentImage]}
+            <img
+              src={images[currentImage]}
               alt=""
               className="w-full h-full object-cover"
             />
@@ -48,18 +73,17 @@ export default function Home() {
         </AnimatePresence>
       </div>
 
-      {/* Top Menu Bar */}
-      <nav className="absolute top-0 left-0 right-0 z-50 border-b border-black bg-white/90 backdrop-blur-sm">
-        <div className="flex justify-between items-center px-8 py-6">
-          <Link href="/" className="text-xl font-light tracking-wider">
+      {/* Top Navigation */}
+      <nav className="absolute top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm">
+        <div className="flex justify-between items-center px-10 py-6">
+          <Link href="/" className="text-sm tracking-widest text-gray-800 font-light hover:opacity-50 transition">
             NHNURSHED
           </Link>
-          
-          <button 
+          <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="text-sm tracking-widest hover:opacity-50 transition"
+            className="text-sm tracking-widest text-gray-800 font-light hover:opacity-50 transition"
           >
-            {menuOpen ? 'CLOSE' : 'MENU'}
+            {menuOpen ? 'CLOSE  ✕' : 'MENU'}
           </button>
         </div>
       </nav>
@@ -71,87 +95,95 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-white z-40 flex items-center justify-center"
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 bg-white z-40 flex flex-col"
           >
-            <nav className="text-center space-y-8">
-              <Link 
-                href="/galleries"
-                className="block text-6xl md:text-8xl font-light hover:italic transition"
-                onClick={() => setMenuOpen(false)}
-              >
-                Galleries
-              </Link>
-              <Link 
-                href="/prints"
-                className="block text-6xl md:text-8xl font-light hover:italic transition"
-                onClick={() => setMenuOpen(false)}
-              >
-                Prints
-              </Link>
-              <Link 
-                href="/about"
-                className="block text-6xl md:text-8xl font-light hover:italic transition"
-                onClick={() => setMenuOpen(false)}
-              >
-                About
-              </Link>
-              <Link 
-                href="/contact"
-                className="block text-6xl md:text-8xl font-light hover:italic transition"
-                onClick={() => setMenuOpen(false)}
-              >
-                Contact
-              </Link>
-            </nav>
+            {/* Menu Links */}
+            <div className="flex-1 flex flex-col items-center justify-center gap-1 pt-20">
+              {menuItems.map((item, index) => (
+                <motion.div
+                  key={item.href}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.07 }}
+                >
+                  <Link
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="block text-6xl md:text-8xl font-light text-black hover:italic transition-all duration-200 text-center py-2 px-6"
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Menu Footer — pinned to bottom */}
+            <div className="px-10 py-6 flex justify-between items-center">
+              <div className="flex gap-8 text-xs tracking-widest text-gray-600">
+                <a href="https://www.instagram.com/nhnurshed_" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">
+                  INSTAGRAM
+                </a>
+                <a href="https://www.facebook.com/nurehabib.nurshed" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">
+                  FACEBOOK
+                </a>
+                <a href="https://flickr.com/photos/159417255@N08" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">
+                  FLICKR
+                </a>
+              </div>
+              <p className="text-xs tracking-widest text-gray-600">DHAKA, BANGLADESH</p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Center Statement */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center px-8">
+      <div className="absolute inset-0 z-10 flex items-center justify-center px-8 pointer-events-none">
         <div className="text-center">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.2 }}
-            className="text-7xl md:text-9xl font-light mb-4 tracking-tight"
+            className="text-xs tracking-widest text-gray-600 mb-8"
+          >
+            DOCUMENTARY · STREET · VISUAL STORYTELLING
+          </motion.p>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.4 }}
+            className="text-6xl md:text-8xl lg:text-9xl font-light tracking-tight leading-none text-black"
           >
             NUR-E HABIB
             <br />
-            NURSHED
+            <span className="italic">NURSHED</span>
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="text-xl md:text-2xl font-light tracking-wide mb-8"
+            transition={{ duration: 1, delay: 0.8 }}
+            className="text-sm tracking-widest text-gray-600 mt-8"
           >
-            DOCUMENTARY PHOTOGRAPHER
-          </motion.p>
-          
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.7 }}
-            className="text-sm tracking-widest text-gray-600"
-          >
-            DHAKA, BANGLADESH
+            PHOTOGRAPHER · DHAKA, BANGLADESH
           </motion.p>
         </div>
       </div>
 
-      {/* Bottom Info */}
-      <div className="absolute bottom-8 left-8 right-8 z-20 flex justify-between items-end text-xs tracking-wider">
-        <div>
-          <p>EST. 2018</p>
-          <p className="text-gray-600">VISUAL STORYTELLER</p>
-        </div>
-        <div className="text-right">
-          <p>SCROLL TO EXPLORE</p>
-          <p className="text-gray-600">↓</p>
-        </div>
+      {/* Slideshow Dots — bottom center */}
+      <div className="absolute bottom-8 left-0 right-0 z-20 flex justify-center gap-2 pointer-events-auto">
+        {images.slice(0, 9).map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentImage(index)}
+            className={`h-px transition-all duration-500 ${
+              currentImage % 9 === index ? 'w-8 bg-black' : 'w-2 bg-gray-400'
+            }`}
+          />
+        ))}
       </div>
+
     </main>
   );
 }

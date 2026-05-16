@@ -5,105 +5,124 @@ import { motion } from 'framer-motion';
 
 export default function GalleriesPage() {
   const galleries = [
-    { name: 'ABSTRACT', slug: 'abstract', count: 25 },
-    { name: 'BLACK & WHITE', slug: 'blackandwhite', count: 30 },
-    { name: 'COLORS', slug: 'colors', count: 28 },
-    { name: 'DOCUMENTARY', slug: 'documentary', count: 32 },
-    { name: 'PORTRAIT', slug: 'portrait', count: 24 },
-    { name: 'STREET', slug: 'street', count: 35 },
+    { name: 'Abstract', slug: 'abstract' },
+    { name: 'Black & White', slug: 'blackandwhite' },
+    { name: 'Colors', slug: 'colors' },
+    { name: 'Documentary', slug: 'documentary' },
+    { name: 'Portrait', slug: 'portrait' },
+    { name: 'Street', slug: 'street' },
   ];
 
   const series = [
-    { name: 'MONSOON SERIES', slug: 'series1', count: 12 },
-    { name: 'OLD DHAKA NIGHTS', slug: 'series2', count: 15 },
-    { name: 'SILENT MOMENTS', slug: 'series3', count: 10 },
-    { name: 'URBAN CHAOS', slug: 'series4', count: 14 },
-    { name: 'HUMAN CONNECTION', slug: 'series5', count: 13 },
+    { name: 'Monsoon Series', slug: 'series1', description: 'A visual journey through monsoon Bangladesh' },
+    { name: 'Old Dhaka Nights', slug: 'series2', description: 'The light and life after dark in Old Dhaka' },
+    { name: 'Silent Moments', slug: 'series3', description: 'Quiet human moments in a loud world' },
+    { name: 'Urban Chaos', slug: 'series4', description: 'The rhythm of city life across Bangladesh' },
+    { name: 'Human Connection', slug: 'series5', description: 'Bonds between people across communities' },
   ];
 
   return (
     <main className="min-h-screen bg-white">
       {/* Header */}
-      <nav className="border-b border-black">
-        <div className="flex justify-between items-center px-8 py-6">
-          <Link href="/" className="text-xl font-light tracking-wider hover:italic transition">
+      <nav className="sticky top-0 bg-white z-40">
+        <div className="flex justify-between items-center px-10 py-6">
+          <Link href="/" className="text-sm tracking-widest text-gray-800 font-light hover:opacity-50 transition">
             NHNURSHED
           </Link>
-          <Link href="/" className="text-sm tracking-widest hover:opacity-50 transition">
+          <Link href="/" className="text-sm tracking-widest text-gray-800 font-light hover:opacity-50 transition">
             HOME
           </Link>
         </div>
       </nav>
 
-      {/* Galleries Section */}
-      <section className="px-8 py-20">
-        <h1 className="text-6xl md:text-8xl font-light mb-4">GALLERIES</h1>
-        <p className="text-sm tracking-wider text-gray-600 mb-16">SINGLE PHOTOGRAPH COLLECTIONS</p>
-        
-        <div className="grid md:grid-cols-3 gap-px bg-black border border-black">
+      {/* Galleries Header */}
+      <section className="px-10 pt-16 pb-12">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="text-7xl md:text-9xl font-light text-black mb-3"
+        >
+          GALLERIES
+        </motion.h1>
+        <p className="text-sm tracking-widest text-gray-500">SINGLE PHOTOGRAPH COLLECTIONS</p>
+      </section>
+
+      {/* Galleries Grid — generous spacing, no borders */}
+      <section className="px-10 pb-24">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
           {galleries.map((gallery, index) => (
-            <Link
-              key={gallery.slug}
-              href={`/gallery/${gallery.slug}`}
-              className="group"
-            >
+            <Link key={gallery.slug} href={`/gallery/${gallery.slug}`} className="group">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white"
               >
-                <div className="aspect-square overflow-hidden">
-                  <img 
+                <div className="aspect-square overflow-hidden mb-5 bg-gray-100">
+                  <img
                     src={`/photos/${gallery.slug}/1.jpg`}
                     alt={gallery.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
                   />
                 </div>
-                <div className="p-6 border-t border-black">
-                  <h3 className="text-2xl font-light mb-2">{gallery.name}</h3>
-                  <p className="text-xs tracking-wider text-gray-600">{gallery.count} PHOTOGRAPHS</p>
-                </div>
+                <h3 className="text-lg font-light text-black tracking-wide group-hover:italic transition-all">
+                  {gallery.name}
+                </h3>
               </motion.div>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Series Section */}
-      <section className="px-8 py-20 bg-gray-50">
-        <h2 className="text-6xl md:text-8xl font-light mb-4">SERIES</h2>
-        <p className="text-sm tracking-wider text-gray-600 mb-16">LONG-FORM VISUAL NARRATIVES</p>
-        
-        <div className="grid md:grid-cols-2 gap-px bg-black border border-black">
+      {/* Series Header */}
+      <section className="px-10 pt-16 pb-12">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="text-7xl md:text-9xl font-light text-black mb-3"
+        >
+          SERIES
+        </motion.h2>
+        <p className="text-sm tracking-widest text-gray-500">LONG-FORM VISUAL NARRATIVES</p>
+      </section>
+
+      {/* Series Grid */}
+      <section className="px-10 pb-32">
+        <div className="grid md:grid-cols-2 gap-x-8 gap-y-16">
           {series.map((item, index) => (
-            <Link
-              key={item.slug}
-              href={`/gallery/${item.slug}`}
-              className="group"
-            >
+            <Link key={item.slug} href={`/gallery/${item.slug}`} className="group">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white"
               >
-                <div className="aspect-video overflow-hidden">
-                  <img 
+                <div className="aspect-video overflow-hidden mb-5 bg-gray-100">
+                  <img
                     src={`/photos/${item.slug}/1.jpg`}
                     alt={item.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
                   />
                 </div>
-                <div className="p-6 border-t border-black">
-                  <h3 className="text-2xl font-light mb-2">{item.name}</h3>
-                  <p className="text-xs tracking-wider text-gray-600">{item.count} PHOTOGRAPHS</p>
-                </div>
+                <h3 className="text-lg font-light text-black tracking-wide mb-2 group-hover:italic transition-all">
+                  {item.name}
+                </h3>
+                <p className="text-sm text-gray-500 font-light">{item.description}</p>
               </motion.div>
             </Link>
           ))}
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="px-10 py-8 flex justify-between items-center text-xs tracking-widest text-gray-400">
+        <p>© 2026 NHNURSHED</p>
+        <div className="flex gap-6">
+          <a href="https://www.instagram.com/nhnurshed_" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">INSTAGRAM</a>
+          <a href="https://www.facebook.com/nurehabib.nurshed" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">FACEBOOK</a>
+          <a href="https://flickr.com/photos/159417255@N08" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">FLICKR</a>
+        </div>
+      </footer>
     </main>
   );
 }
