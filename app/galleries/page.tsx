@@ -29,11 +29,11 @@ export default function GalleriesPage() {
   ];
 
   const series = [
-    { name: 'Monsoon Series', slug: 'series1', description: 'A visual journey through monsoon Bangladesh' },
-    { name: 'Old Dhaka Nights', slug: 'series2', description: 'The light and life after dark in Old Dhaka' },
-    { name: 'Silent Moments', slug: 'series3', description: 'Quiet human moments in a loud world' },
-    { name: 'Urban Chaos', slug: 'series4', description: 'The rhythm of city life across Bangladesh' },
-    { name: 'Human Connection', slug: 'series5', description: 'Bonds between people across communities' },
+    { name: 'Jatra', slug: 'series1', description: 'A journey shaped by desires, dreams, and the pursuit of something greater.' },
+    { name: 'The Vanished Mirage', slug: 'series2', description: 'A pursuit through fog, mountains, and moonlight — chasing what was never truly lost.' },
+    { name: 'Not Me, Neither You', slug: 'series3', description: 'A conceptual exploration of contradiction, coexistence, and invisible distance.' },
+    { name: 'Reality of Dreams', slug: 'series4', description: 'Drifting through the fragile space between imagination and existence.' },
+    { name: 'Where Is My Home?', slug: 'series5', description: 'The quiet aftermath of displacement along the coastline of Matarbari.' },
   ];
 
   return (
@@ -75,7 +75,6 @@ export default function GalleriesPage() {
                 CLOSE  ✕
               </button>
             </div>
-
             <div className="flex-1 flex flex-col items-center justify-center gap-1">
               {menuItems.map((item, index) => (
                 <motion.div
@@ -94,7 +93,6 @@ export default function GalleriesPage() {
                 </motion.div>
               ))}
             </div>
-
             <div className="px-10 py-6 flex justify-between items-center">
               <div className="flex gap-8 text-xs tracking-widest text-gray-600">
                 <a href="https://www.instagram.com/nhnurshed_" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">INSTAGRAM</a>
@@ -139,11 +137,11 @@ export default function GalleriesPage() {
         <p className="text-sm tracking-widest text-gray-500">LONG-FORM VISUAL NARRATIVES</p>
       </section>
 
-      {/* Series Grid */}
+      {/* Series Grid — links to /series/[slug] */}
       <section className="px-16 pb-40">
         <div className="grid md:grid-cols-2 gap-x-16 gap-y-24">
           {series.map((item) => (
-            <Link key={item.slug} href={`/gallery/${item.slug}`} className="group">
+            <Link key={item.slug} href={`/series/${item.slug}`} className="group">
               <div className="bg-gray-50 p-8 md:p-12 flex items-center justify-center mb-6" style={{ minHeight: '320px' }}>
                 <img
                   src={`/photos/${item.slug}/1.jpg`}
