@@ -2,55 +2,84 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 export default function AboutPage() {
+  const [photoError, setPhotoError] = useState(false);
+
   return (
-    <main className="h-screen overflow-hidden bg-white flex flex-col">
+    <main className="min-h-screen bg-white">
+
       {/* Header */}
-      <nav className="bg-white flex-shrink-0">
-        <div className="flex justify-between items-center px-10 py-5">
-          <Link href="/" className="text-sm tracking-widest text-gray-800 font-light hover:opacity-50 transition">
+      <nav className="sticky top-0 bg-white z-40">
+        <div className="flex justify-between items-center px-10 py-6">
+          <Link href="/" className="text-sm tracking-widest text-black font-light hover:opacity-40 transition">
             NHNURSHED
           </Link>
-          <Link href="/" className="text-sm tracking-widest text-gray-800 font-light hover:opacity-50 transition">
+          <Link href="/" className="text-sm tracking-widest text-black font-light hover:opacity-40 transition">
             HOME
           </Link>
         </div>
       </nav>
 
-      {/* Main Content — all in one screen */}
-      <div className="flex-1 grid grid-cols-12 overflow-hidden">
+      {/* Hero Name */}
+      <section className="px-10 pt-12 pb-16">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="text-7xl md:text-9xl font-light text-black"
+        >
+          ABOUT
+        </motion.h1>
+      </section>
 
-        {/* Left — Portrait */}
-        <div className="col-span-3 border-r border-gray-100 flex flex-col">
-          <div className="flex-1 overflow-hidden">
-            {/* Replace with your photo by saving it as public/photos/photographer.jpg */}
-            <img
-              src="/photos/photographer.jpg"
-              alt="Nur-E Habib Nurshed"
-              className="w-full h-full object-cover object-top"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-          </div>
-          <div className="p-6 flex-shrink-0">
-            <h1 className="text-lg font-light text-black leading-tight">
-              NUR-E HABIB<br />NURSHED
-            </h1>
-            <p className="text-xs text-gray-500 mt-1 tracking-wide">DHAKA, BANGLADESH</p>
-          </div>
-        </div>
+      {/* Top Section — Portrait + Bio side by side */}
+      <section className="px-10 pb-20">
+        <div className="grid md:grid-cols-2 gap-16 md:gap-24">
 
-        {/* Middle — Bio */}
-        <div className="col-span-5 px-10 py-8 overflow-y-auto border-r border-gray-100">
+          {/* Portrait */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
           >
-            <p className="text-xs tracking-widest text-gray-400 mb-6">ABOUT</p>
-            <div className="space-y-4 text-sm text-gray-700 font-light leading-relaxed">
+            {!photoError ? (
+              <div className="bg-gray-50 p-12 flex items-center justify-center"
+                style={{ minHeight: '500px' }}>
+                <img
+                  src="/photos/photographer.jpg"
+                  alt="Nur-E Habib Nurshed"
+                  className="max-w-full max-h-96 object-contain"
+                  onError={() => setPhotoError(true)}
+                />
+              </div>
+            ) : (
+              <div className="bg-gray-50 flex items-center justify-center"
+                style={{ minHeight: '500px' }}>
+                <div className="text-center px-8">
+                  <p className="text-sm text-gray-400 tracking-widest mb-3">PHOTOGRAPHER PORTRAIT</p>
+                  <p className="text-xs text-gray-300">
+                    Add your photo as<br />
+                    <code className="text-gray-400">public/photos/photographer.jpg</code>
+                  </p>
+                </div>
+              </div>
+            )}
+            <div className="mt-6">
+              <h2 className="text-2xl font-light text-black">Nur-E Habib Nurshed</h2>
+              <p className="text-sm text-gray-500 mt-1 tracking-wide">Dhaka, Bangladesh</p>
+            </div>
+          </motion.div>
+
+          {/* Bio */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-col justify-center"
+          >
+            <div className="space-y-5 text-base text-gray-700 font-light leading-relaxed">
               <p>
                 Bangladeshi CSE student and self-taught photographer based in Bangladesh.
                 Nurshed began to consider photography as a passion while studying at
@@ -61,42 +90,51 @@ export default function AboutPage() {
                 He visually documents street, travel, and social issues around the country.
                 After completing the "Fundamentals of Photography" course by Photo Learner's
                 Academy instructed by Ayman Nakib, he developed a deep interest in photography.
-                Following "Immersive Media and Online Journalism" by Pathshala South Asian Media
-                Institute, he immersed himself in journalism and writing.
               </p>
               <p>
-                The "Documentary Photography – One Day Workshop" by Saiful Huq Omi arranged by
-                Counter Foto further fueled his passion for visual documentation. He continues
-                his learning through books, research, and constant experimentation.
+                Following "Immersive Media and Online Journalism" by Pathshala South Asian
+                Media Institute, he immersed himself in journalism and writing. The
+                "Documentary Photography – One Day Workshop" by Saiful Huq Omi arranged
+                by Counter Foto further fueled his passion for visual documentation.
               </p>
               <p>
-                Nurshed has collaborated with numerous NGOs and organizations covering cultural
-                functions, sports, products, and outdoor portraits, in addition to his street
-                documentary work across Bangladesh.
+                Nurshed has collaborated with numerous NGOs and organizations covering
+                cultural functions, sports, products, and outdoor portraits — in addition
+                to his street documentary work across different areas of Bangladesh.
               </p>
             </div>
 
-            <div className="mt-8">
-              <p className="text-xs tracking-widest text-gray-400 mb-4">PUBLISHED IN</p>
-              <div className="space-y-2 text-sm text-gray-700 font-light">
-                <p>In Focus — The Business Standard</p>
-                <p>Hardcore Street Collective</p>
-                <p>Street Sans Frontières (friendsinstreet)</p>
-                <p>MyStreetBnw — Instagram Feature</p>
-              </div>
+            {/* Social Links */}
+            <div className="flex gap-8 mt-10">
+              <a href="https://www.instagram.com/nhnurshed_" target="_blank" rel="noopener noreferrer"
+                className="text-sm tracking-widest text-black hover:opacity-40 transition">
+                INSTAGRAM ↗
+              </a>
+              <a href="https://www.facebook.com/nurehabib.nurshed" target="_blank" rel="noopener noreferrer"
+                className="text-sm tracking-widest text-black hover:opacity-40 transition">
+                FACEBOOK ↗
+              </a>
+              <a href="https://flickr.com/photos/159417255@N08" target="_blank" rel="noopener noreferrer"
+                className="text-sm tracking-widest text-black hover:opacity-40 transition">
+                FLICKR ↗
+              </a>
             </div>
           </motion.div>
         </div>
+      </section>
 
-        {/* Right — Recognition + Education */}
-        <div className="col-span-4 px-8 py-8 overflow-y-auto">
+      {/* Recognition + Publications + Education */}
+      <section className="px-10 py-20 bg-gray-50">
+        <div className="grid md:grid-cols-3 gap-16 md:gap-24">
+
+          {/* Recognition */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ delay: 0.1 }}
           >
-            <p className="text-xs tracking-widest text-gray-400 mb-4">RECOGNITION</p>
-            <div className="space-y-3 mb-8">
+            <p className="text-xs tracking-widest text-black mb-8">RECOGNITION & EXHIBITIONS</p>
+            <div className="space-y-5">
               {[
                 { year: '2023', title: 'First Prize — AIUBPC Photography Exhibition Season III' },
                 { year: '2023', title: 'Photo Fest Asia 2023 — EWUPC' },
@@ -108,34 +146,84 @@ export default function AboutPage() {
               ].map((item, i) => (
                 <div key={i} className="flex gap-4">
                   <span className="text-xs text-gray-400 w-8 flex-shrink-0 pt-0.5">{item.year}</span>
-                  <span className="text-xs text-gray-700 font-light leading-relaxed">{item.title}</span>
+                  <span className="text-sm text-gray-700 font-light leading-relaxed">{item.title}</span>
                 </div>
               ))}
-              <p className="text-xs text-gray-400 pl-12">+ 13 more national & international exhibitions</p>
+              <p className="text-sm text-gray-500 pl-12 font-light">
+                + 13 more national & international exhibitions
+              </p>
             </div>
+          </motion.div>
 
-            <p className="text-xs tracking-widest text-gray-400 mb-4">EDUCATION</p>
+          {/* Publications */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <p className="text-xs tracking-widest text-black mb-8">PUBLISHED IN</p>
             <div className="space-y-4">
+              {[
+                'In Focus — The Business Standard',
+                'Hardcore Street Collective',
+                'Street Sans Frontières (friendsinstreet)',
+                'MyStreetBnw — Instagram Feature',
+              ].map((pub, i) => (
+                <p key={i} className="text-sm text-gray-700 font-light leading-relaxed">{pub}</p>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Education */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <p className="text-xs tracking-widest text-black mb-8">EDUCATION & WORKSHOPS</p>
+            <div className="space-y-6">
               {[
                 { title: 'Fundamentals of Photography', org: "Photo Learner's Academy — Ayman Nakib" },
                 { title: 'Immersive Media and Online Journalism', org: 'Pathshala South Asian Media Institute' },
                 { title: 'Documentary Photography Workshop', org: 'Saiful Huq Omi — Counter Foto' },
+                { title: 'BSc in Computer Science & Engineering', org: 'American International University-Bangladesh' },
               ].map((item, i) => (
                 <div key={i}>
-                  <p className="text-xs text-gray-700 font-light">{item.title}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{item.org}</p>
+                  <p className="text-sm text-black font-light">{item.title}</p>
+                  <p className="text-xs text-gray-500 mt-1">{item.org}</p>
                 </div>
               ))}
             </div>
-
-            <div className="mt-8 pt-6 border-t border-gray-100 flex gap-6 text-xs tracking-widest text-gray-400">
-              <a href="https://www.instagram.com/nhnurshed_" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">INSTAGRAM</a>
-              <a href="https://www.facebook.com/nurehabib.nurshed" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">FACEBOOK</a>
-              <a href="https://flickr.com/photos/159417255@N08" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">FLICKR</a>
-            </div>
           </motion.div>
+
         </div>
-      </div>
+      </section>
+
+      {/* Contact CTA */}
+      <section className="px-10 py-20">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+          <div>
+            <h3 className="text-3xl font-light text-black mb-2">Available for assignments</h3>
+            <p className="text-gray-600 font-light">Documentary, street, portrait, events & collaborations</p>
+          </div>
+          <Link
+            href="/contact"
+            className="text-sm tracking-widest text-black border border-black px-8 py-4 hover:bg-black hover:text-white transition"
+          >
+            GET IN TOUCH →
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="px-10 py-8 flex justify-between items-center text-xs tracking-widest text-gray-400">
+        <p>© 2026 NHNURSHED</p>
+        <div className="flex gap-6">
+          <a href="https://www.instagram.com/nhnurshed_" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">INSTAGRAM</a>
+          <a href="https://www.facebook.com/nurehabib.nurshed" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">FACEBOOK</a>
+          <a href="https://flickr.com/photos/159417255@N08" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">FLICKR</a>
+        </div>
+      </footer>
     </main>
   );
 }

@@ -23,20 +23,21 @@ export default function GalleriesPage() {
 
   return (
     <main className="min-h-screen bg-white">
+
       {/* Header */}
       <nav className="sticky top-0 bg-white z-40">
         <div className="flex justify-between items-center px-10 py-6">
-          <Link href="/" className="text-sm tracking-widest text-gray-800 font-light hover:opacity-50 transition">
+          <Link href="/" className="text-sm tracking-widest text-black font-light hover:opacity-40 transition">
             NHNURSHED
           </Link>
-          <Link href="/" className="text-sm tracking-widest text-gray-800 font-light hover:opacity-50 transition">
+          <Link href="/" className="text-sm tracking-widest text-black font-light hover:opacity-40 transition">
             HOME
           </Link>
         </div>
       </nav>
 
-      {/* Galleries Header */}
-      <section className="px-10 pt-16 pb-12">
+      {/* Galleries Title */}
+      <section className="px-10 pt-12 pb-16">
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -48,21 +49,23 @@ export default function GalleriesPage() {
         <p className="text-sm tracking-widest text-gray-500">SINGLE PHOTOGRAPH COLLECTIONS</p>
       </section>
 
-      {/* Galleries Grid — generous spacing, no borders */}
-      <section className="px-10 pb-24">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+      {/* Galleries — wall-like spacing */}
+      <section className="px-16 pb-32">
+        <div className="grid md:grid-cols-2 gap-x-16 gap-y-24">
           {galleries.map((gallery, index) => (
             <Link key={gallery.slug} href={`/gallery/${gallery.slug}`} className="group">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: index * 0.08 }}
               >
-                <div className="aspect-square overflow-hidden mb-5 bg-gray-100">
+                {/* Photo with wall breathing room */}
+                <div className="bg-gray-50 p-10 md:p-14 flex items-center justify-center mb-6"
+                  style={{ minHeight: '360px' }}>
                   <img
                     src={`/photos/${gallery.slug}/1.jpg`}
                     alt={gallery.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+                    className="max-w-full max-h-72 object-contain group-hover:opacity-85 transition duration-700"
                   />
                 </div>
                 <h3 className="text-lg font-light text-black tracking-wide group-hover:italic transition-all">
@@ -74,8 +77,8 @@ export default function GalleriesPage() {
         </div>
       </section>
 
-      {/* Series Header */}
-      <section className="px-10 pt-16 pb-12">
+      {/* Series Title */}
+      <section className="px-10 pt-8 pb-16">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -87,21 +90,23 @@ export default function GalleriesPage() {
         <p className="text-sm tracking-widest text-gray-500">LONG-FORM VISUAL NARRATIVES</p>
       </section>
 
-      {/* Series Grid */}
-      <section className="px-10 pb-32">
-        <div className="grid md:grid-cols-2 gap-x-8 gap-y-16">
+      {/* Series — wall-like spacing */}
+      <section className="px-16 pb-40">
+        <div className="grid md:grid-cols-2 gap-x-16 gap-y-24">
           {series.map((item, index) => (
             <Link key={item.slug} href={`/gallery/${item.slug}`} className="group">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: index * 0.08 }}
               >
-                <div className="aspect-video overflow-hidden mb-5 bg-gray-100">
+                {/* Landscape ratio with wall padding */}
+                <div className="bg-gray-50 p-8 md:p-12 flex items-center justify-center mb-6"
+                  style={{ minHeight: '320px' }}>
                   <img
                     src={`/photos/${item.slug}/1.jpg`}
                     alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+                    className="max-w-full max-h-64 object-contain group-hover:opacity-85 transition duration-700"
                   />
                 </div>
                 <h3 className="text-lg font-light text-black tracking-wide mb-2 group-hover:italic transition-all">

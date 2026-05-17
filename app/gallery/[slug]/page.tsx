@@ -32,11 +32,9 @@ export default function GalleryPage() {
       let i = 1;
       while (i <= 100) {
         try {
-          const response = await fetch(`/photos/${slug}/${i}.jpg`);
-          if (response.ok) {
-            imageList.push(`/photos/${slug}/${i}.jpg`);
-            i++;
-          } else break;
+          const res = await fetch(`/photos/${slug}/${i}.jpg`);
+          if (res.ok) { imageList.push(`/photos/${slug}/${i}.jpg`); i++; }
+          else break;
         } catch { break; }
       }
       setImages(imageList);
@@ -48,8 +46,8 @@ export default function GalleryPage() {
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (selectedImage === null) return;
-      if (e.key === 'ArrowRight') setSelectedImage((p) => p !== null ? Math.min(p + 1, images.length - 1) : null);
-      if (e.key === 'ArrowLeft') setSelectedImage((p) => p !== null ? Math.max(p - 1, 0) : null);
+      if (e.key === 'ArrowRight') setSelectedImage(p => p !== null ? Math.min(p + 1, images.length - 1) : null);
+      if (e.key === 'ArrowLeft') setSelectedImage(p => p !== null ? Math.max(p - 1, 0) : null);
       if (e.key === 'Escape') setSelectedImage(null);
     };
     window.addEventListener('keydown', handleKey);
@@ -65,44 +63,52 @@ export default function GalleryPage() {
 
   return (
     <div className="min-h-screen bg-white">
+
       {/* Header */}
       <nav className="sticky top-0 bg-white z-40">
         <div className="flex justify-between items-center px-10 py-6">
-          <Link href="/galleries" className="text-sm tracking-widest text-gray-800 font-light hover:opacity-50 transition">
+          <Link href="/galleries" className="text-sm tracking-widest text-black font-light hover:opacity-40 transition">
             ← GALLERIES
           </Link>
-          <Link href="/" className="text-sm tracking-widest text-gray-800 font-light hover:opacity-50 transition">
+          <Link href="/" className="text-sm tracking-widest text-black font-light hover:opacity-40 transition">
             HOME
           </Link>
         </div>
       </nav>
 
-      {/* Gallery Title */}
-      <div className="px-10 pt-12 pb-16">
+      {/* Title */}
+      <div className="px-10 pt-10 pb-20">
         <h1 className="text-6xl md:text-8xl font-light text-black">{title}</h1>
+        {loaded && (
+          <p className="text-sm text-gray-500 mt-3 tracking-widest">
+            {images.length} PHOTOGRAPHS
+          </p>
+        )}
       </div>
 
-      {/* Photo Grid — no borders, generous space */}
+      {/* Photo Grid — gallery wall feeling */}
       {loaded && (
-        <div className="px-10 pb-32">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+        <div className="px-16 pb-40">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-24">
             {images.map((image, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: index * 0.04 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
                 onClick={() => setSelectedImage(index)}
                 className="group cursor-pointer"
               >
-                <div className="aspect-square overflow-hidden bg-gray-100 mb-4">
+                {/* Photo with wall-like padding */}
+                <div className="bg-gray-50 p-8 md:p-12 flex items-center justify-center mb-6"
+                  style={{ minHeight: '400px' }}>
                   <img
                     src={image}
                     alt={`${title} ${index + 1}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+                    className="max-w-full max-h-80 object-contain group-hover:opacity-90 transition duration-500"
                   />
                 </div>
-                <p className="text-sm font-light text-gray-700 tracking-wide group-hover:italic transition-all">
+                <p className="text-sm font-light text-black tracking-wide group-hover:italic transition-all">
                   {title}, {new Date().getFullYear()}
                 </p>
               </motion.div>
@@ -111,7 +117,7 @@ export default function GalleryPage() {
         </div>
       )}
 
-      {/* Lightbox — photo on a wall feeling */}
+      {/* Lightbox */}
       <AnimatePresence>
         {selectedImage !== null && (
           <motion.div
@@ -120,35 +126,28 @@ export default function GalleryPage() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="fixed inset-0 bg-white z-50 flex flex-col"
-            onClick={() => setSelectedImage(null)}
           >
             {/* Lightbox Nav */}
-            <div className="flex justify-between items-center px-10 py-6">
-              <p className="text-sm font-light text-black tracking-wide">
-                {title}
-              </p>
+            <div className="flex justify-between items-center px-10 py-6 flex-shrink-0">
+              <p className="text-sm font-light text-black tracking-wide">{title}</p>
               <div className="flex items-center gap-10">
-                <p className="text-sm text-gray-400 tracking-widest">
+                <p className="text-sm text-gray-500 tracking-widest">
                   {selectedImage + 1} / {images.length}
                 </p>
                 <button
                   onClick={() => setSelectedImage(null)}
-                  className="text-sm tracking-widest text-gray-800 hover:opacity-50 transition"
+                  className="text-sm tracking-widest text-black hover:opacity-40 transition"
                 >
                   CLOSE  ✕
                 </button>
               </div>
             </div>
 
-            {/* Photo — on a wall */}
-            <div
-              className="flex-1 flex items-center justify-center px-20 py-8 relative"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Prev */}
+            {/* Photo on white wall */}
+            <div className="flex-1 flex items-center justify-center px-24 py-8 relative">
               {selectedImage > 0 && (
                 <button
-                  className="absolute left-10 text-gray-400 text-2xl hover:text-black transition z-10"
+                  className="absolute left-10 text-black text-xl hover:opacity-40 transition z-10 tracking-widest"
                   onClick={() => setSelectedImage(selectedImage - 1)}
                 >
                   ←
@@ -157,19 +156,18 @@ export default function GalleryPage() {
 
               <motion.img
                 key={selectedImage}
-                initial={{ opacity: 0, scale: 0.97 }}
+                initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4 }}
                 src={images[selectedImage]}
                 alt={`${title} ${selectedImage + 1}`}
-                className="max-h-full max-w-full object-contain shadow-sm"
-                style={{ maxHeight: 'calc(100vh - 200px)' }}
+                className="max-w-full object-contain"
+                style={{ maxHeight: 'calc(100vh - 180px)' }}
               />
 
-              {/* Next */}
               {selectedImage < images.length - 1 && (
                 <button
-                  className="absolute right-10 text-gray-400 text-2xl hover:text-black transition z-10"
+                  className="absolute right-10 text-black text-xl hover:opacity-40 transition z-10 tracking-widest"
                   onClick={() => setSelectedImage(selectedImage + 1)}
                 >
                   →
@@ -178,7 +176,7 @@ export default function GalleryPage() {
             </div>
 
             {/* Lightbox Footer */}
-            <div className="px-10 py-6">
+            <div className="px-10 py-6 flex-shrink-0">
               <p className="text-xs tracking-widest text-gray-400 text-center">
                 ← → ARROW KEYS TO NAVIGATE · ESC TO CLOSE
               </p>
