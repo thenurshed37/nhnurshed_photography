@@ -1,11 +1,24 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const menuItems = [
+  { label: 'Galleries', href: '/galleries' },
+  { label: 'Prints', href: '/prints' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
+];
 
 export default function AboutPage() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const [photoError, setPhotoError] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
 
   return (
     <main className="min-h-screen bg-white">
@@ -13,40 +26,82 @@ export default function AboutPage() {
       {/* Header */}
       <nav className="sticky top-0 bg-white z-40">
         <div className="flex justify-between items-center px-10 py-6">
-          <Link href="/" className="text-sm tracking-widest text-black font-light hover:opacity-40 transition">
+          <Link href="/" className="text-xl tracking-widest text-black font-light hover:opacity-40 transition">
             NHNURSHED
           </Link>
-          <Link href="/" className="text-sm tracking-widest text-black font-light hover:opacity-40 transition">
-            HOME
-          </Link>
+          <button
+            onClick={() => setMenuOpen(true)}
+            className="text-xl tracking-widest text-black font-light hover:opacity-40 transition"
+          >
+            MENU
+          </button>
         </div>
       </nav>
 
-      {/* Hero Name */}
-      <section className="px-10 pt-12 pb-16">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="text-7xl md:text-9xl font-light text-black"
-        >
-          ABOUT
-        </motion.h1>
-      </section>
-
-      {/* Top Section — Portrait + Bio side by side */}
-      <section className="px-10 pb-20">
-        <div className="grid md:grid-cols-2 gap-16 md:gap-24">
-
-          {/* Portrait */}
+      {/* Full Screen Menu */}
+      <AnimatePresence>
+        {menuOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 bg-white z-50 flex flex-col"
           >
+            <div className="flex justify-between items-center px-10 py-6">
+              <Link href="/" className="text-xl tracking-widest text-black font-light hover:opacity-40 transition">
+                NHNURSHED
+              </Link>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="text-xl tracking-widest text-black font-light hover:opacity-40 transition"
+              >
+                CLOSE  ✕
+              </button>
+            </div>
+
+            <div className="flex-1 flex flex-col items-center justify-center gap-1">
+              {menuItems.map((item, index) => (
+                <motion.div
+                  key={item.href}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.07 }}
+                >
+                  <Link
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="block text-6xl md:text-8xl font-light text-black hover:italic transition-all duration-200 text-center py-2 px-6"
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="px-10 py-6 flex justify-between items-center">
+              <div className="flex gap-8 text-xs tracking-widest text-gray-600">
+                <a href="https://www.instagram.com/nhnurshed_" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">INSTAGRAM</a>
+                <a href="https://www.facebook.com/nurehabib.nurshed" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">FACEBOOK</a>
+                <a href="https://flickr.com/photos/159417255@N08" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">FLICKR</a>
+              </div>
+              <p className="text-xs tracking-widest text-gray-600">DHAKA, BANGLADESH</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Hero */}
+      <section className="px-10 pt-12 pb-16">
+        <h1 className="text-7xl md:text-9xl font-light text-black">ABOUT</h1>
+      </section>
+
+      {/* Portrait + Bio */}
+      <section className="px-10 pb-20">
+        <div className="grid md:grid-cols-2 gap-16 md:gap-24">
+          <div>
             {!photoError ? (
-              <div className="bg-gray-50 p-12 flex items-center justify-center"
-                style={{ minHeight: '500px' }}>
+              <div className="bg-gray-50 p-12 flex items-center justify-center" style={{ minHeight: '500px' }}>
                 <img
                   src="/photos/photographer.jpg"
                   alt="Nur-E Habib Nurshed"
@@ -55,14 +110,10 @@ export default function AboutPage() {
                 />
               </div>
             ) : (
-              <div className="bg-gray-50 flex items-center justify-center"
-                style={{ minHeight: '500px' }}>
+              <div className="bg-gray-50 flex items-center justify-center" style={{ minHeight: '500px' }}>
                 <div className="text-center px-8">
                   <p className="text-sm text-gray-400 tracking-widest mb-3">PHOTOGRAPHER PORTRAIT</p>
-                  <p className="text-xs text-gray-300">
-                    Add your photo as<br />
-                    <code className="text-gray-400">public/photos/photographer.jpg</code>
-                  </p>
+                  <p className="text-xs text-gray-300">Add your photo as<br /><code className="text-gray-400">public/photos/photographer.jpg</code></p>
                 </div>
               </div>
             )}
@@ -70,15 +121,9 @@ export default function AboutPage() {
               <h2 className="text-2xl font-light text-black">Nur-E Habib Nurshed</h2>
               <p className="text-sm text-gray-500 mt-1 tracking-wide">Dhaka, Bangladesh</p>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Bio */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-col justify-center"
-          >
+          <div className="flex flex-col justify-center">
             <div className="space-y-5 text-base text-gray-700 font-light leading-relaxed">
               <p>
                 Bangladeshi CSE student and self-taught photographer based in Bangladesh.
@@ -103,36 +148,19 @@ export default function AboutPage() {
                 to his street documentary work across different areas of Bangladesh.
               </p>
             </div>
-
-            {/* Social Links */}
             <div className="flex gap-8 mt-10">
-              <a href="https://www.instagram.com/nhnurshed_" target="_blank" rel="noopener noreferrer"
-                className="text-sm tracking-widest text-black hover:opacity-40 transition">
-                INSTAGRAM ↗
-              </a>
-              <a href="https://www.facebook.com/nurehabib.nurshed" target="_blank" rel="noopener noreferrer"
-                className="text-sm tracking-widest text-black hover:opacity-40 transition">
-                FACEBOOK ↗
-              </a>
-              <a href="https://flickr.com/photos/159417255@N08" target="_blank" rel="noopener noreferrer"
-                className="text-sm tracking-widest text-black hover:opacity-40 transition">
-                FLICKR ↗
-              </a>
+              <a href="https://www.instagram.com/nhnurshed_" target="_blank" rel="noopener noreferrer" className="text-sm tracking-widest text-black hover:opacity-40 transition">INSTAGRAM ↗</a>
+              <a href="https://www.facebook.com/nurehabib.nurshed" target="_blank" rel="noopener noreferrer" className="text-sm tracking-widest text-black hover:opacity-40 transition">FACEBOOK ↗</a>
+              <a href="https://flickr.com/photos/159417255@N08" target="_blank" rel="noopener noreferrer" className="text-sm tracking-widest text-black hover:opacity-40 transition">FLICKR ↗</a>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Recognition + Publications + Education */}
       <section className="px-10 py-20 bg-gray-50">
         <div className="grid md:grid-cols-3 gap-16 md:gap-24">
-
-          {/* Recognition */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
+          <div>
             <p className="text-xs tracking-widest text-black mb-8">RECOGNITION & EXHIBITIONS</p>
             <div className="space-y-5">
               {[
@@ -149,18 +177,11 @@ export default function AboutPage() {
                   <span className="text-sm text-gray-700 font-light leading-relaxed">{item.title}</span>
                 </div>
               ))}
-              <p className="text-sm text-gray-500 pl-12 font-light">
-                + 13 more national & international exhibitions
-              </p>
+              <p className="text-sm text-gray-500 pl-12 font-light">+ 13 more exhibitions</p>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Publications */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
+          <div>
             <p className="text-xs tracking-widest text-black mb-8">PUBLISHED IN</p>
             <div className="space-y-4">
               {[
@@ -172,14 +193,9 @@ export default function AboutPage() {
                 <p key={i} className="text-sm text-gray-700 font-light leading-relaxed">{pub}</p>
               ))}
             </div>
-          </motion.div>
+          </div>
 
-          {/* Education */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
+          <div>
             <p className="text-xs tracking-widest text-black mb-8">EDUCATION & WORKSHOPS</p>
             <div className="space-y-6">
               {[
@@ -194,28 +210,23 @@ export default function AboutPage() {
                 </div>
               ))}
             </div>
-          </motion.div>
-
+          </div>
         </div>
       </section>
 
-      {/* Contact CTA */}
+      {/* CTA */}
       <section className="px-10 py-20">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
           <div>
             <h3 className="text-3xl font-light text-black mb-2">Available for assignments</h3>
             <p className="text-gray-600 font-light">Documentary, street, portrait, events & collaborations</p>
           </div>
-          <Link
-            href="/contact"
-            className="text-sm tracking-widest text-black border border-black px-8 py-4 hover:bg-black hover:text-white transition"
-          >
+          <Link href="/contact" className="text-sm tracking-widest text-black border border-black px-8 py-4 hover:bg-black hover:text-white transition">
             GET IN TOUCH →
           </Link>
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="px-10 py-8 flex justify-between items-center text-xs tracking-widest text-gray-400">
         <p>© 2026 NHNURSHED</p>
         <div className="flex gap-6">

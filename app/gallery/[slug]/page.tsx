@@ -19,12 +19,20 @@ const galleryNames: Record<string, string> = {
   series5: 'Human Connection',
 };
 
+const menuItems = [
+  { label: 'Galleries', href: '/galleries' },
+  { label: 'Prints', href: '/prints' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
+];
+
 export default function GalleryPage() {
   const params = useParams();
   const slug = params.slug as string;
   const [images, setImages] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const loadImages = async () => {
@@ -55,9 +63,13 @@ export default function GalleryPage() {
   }, [selectedImage, images.length]);
 
   useEffect(() => {
-    document.body.style.overflow = selectedImage !== null ? 'hidden' : '';
+    if (selectedImage !== null || menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
     return () => { document.body.style.overflow = ''; };
-  }, [selectedImage]);
+  }, [selectedImage, menuOpen]);
 
   const title = galleryNames[slug] || slug;
 
@@ -67,14 +79,70 @@ export default function GalleryPage() {
       {/* Header */}
       <nav className="sticky top-0 bg-white z-40">
         <div className="flex justify-between items-center px-10 py-6">
-          <Link href="/galleries" className="text-sm tracking-widest text-black font-light hover:opacity-40 transition">
+          <Link href="/galleries" className="text-xl tracking-widest text-black font-light hover:opacity-40 transition">
             ← GALLERIES
           </Link>
-          <Link href="/" className="text-sm tracking-widest text-black font-light hover:opacity-40 transition">
-            HOME
-          </Link>
+          <button
+            onClick={() => setMenuOpen(true)}
+            className="text-xl tracking-widest text-black font-light hover:opacity-40 transition"
+          >
+            MENU
+          </button>
         </div>
       </nav>
+
+      {/* Full Screen Menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 bg-white z-50 flex flex-col"
+          >
+            <div className="flex justify-between items-center px-10 py-6">
+              <Link href="/" className="text-xl tracking-widest text-black font-light hover:opacity-40 transition">
+                NHNURSHED
+              </Link>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="text-xl tracking-widest text-black font-light hover:opacity-40 transition"
+              >
+                CLOSE  ✕
+              </button>
+            </div>
+
+            <div className="flex-1 flex flex-col items-center justify-center gap-1">
+              {menuItems.map((item, index) => (
+                <motion.div
+                  key={item.href}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.07 }}
+                >
+                  <Link
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="block text-6xl md:text-8xl font-light text-black hover:italic transition-all duration-200 text-center py-2 px-6"
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="px-10 py-6 flex justify-between items-center">
+              <div className="flex gap-8 text-xs tracking-widest text-gray-600">
+                <a href="https://www.instagram.com/nhnurshed_" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">INSTAGRAM</a>
+                <a href="https://www.facebook.com/nurehabib.nurshed" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">FACEBOOK</a>
+                <a href="https://flickr.com/photos/159417255@N08" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">FLICKR</a>
+              </div>
+              <p className="text-xs tracking-widest text-gray-600">DHAKA, BANGLADESH</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Title */}
       <div className="px-10 pt-10 pb-20">
@@ -86,32 +154,27 @@ export default function GalleryPage() {
         )}
       </div>
 
-      {/* Photo Grid — gallery wall feeling */}
+      {/* Photo Grid */}
       {loaded && (
         <div className="px-16 pb-40">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-24">
             {images.map((image, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
                 onClick={() => setSelectedImage(index)}
                 className="group cursor-pointer"
               >
-                {/* Photo with wall-like padding */}
-                <div className="bg-gray-50 p-8 md:p-12 flex items-center justify-center mb-6"
-                  style={{ minHeight: '400px' }}>
+                <div className="bg-gray-50 p-8 md:p-12 flex items-center justify-center mb-6" style={{ minHeight: '400px' }}>
                   <img
                     src={image}
                     alt={`${title} ${index + 1}`}
-                    className="max-w-full max-h-80 object-contain group-hover:opacity-90 transition duration-500"
+                    className="max-w-full max-h-80 object-contain group-hover:opacity-85 transition duration-500"
                   />
                 </div>
                 <p className="text-sm font-light text-black tracking-wide group-hover:italic transition-all">
                   {title}, {new Date().getFullYear()}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -127,7 +190,6 @@ export default function GalleryPage() {
             transition={{ duration: 0.3 }}
             className="fixed inset-0 bg-white z-50 flex flex-col"
           >
-            {/* Lightbox Nav */}
             <div className="flex justify-between items-center px-10 py-6 flex-shrink-0">
               <p className="text-sm font-light text-black tracking-wide">{title}</p>
               <div className="flex items-center gap-10">
@@ -136,18 +198,17 @@ export default function GalleryPage() {
                 </p>
                 <button
                   onClick={() => setSelectedImage(null)}
-                  className="text-sm tracking-widest text-black hover:opacity-40 transition"
+                  className="text-xl tracking-widest text-black hover:opacity-40 transition"
                 >
                   CLOSE  ✕
                 </button>
               </div>
             </div>
 
-            {/* Photo on white wall */}
             <div className="flex-1 flex items-center justify-center px-24 py-8 relative">
               {selectedImage > 0 && (
                 <button
-                  className="absolute left-10 text-black text-xl hover:opacity-40 transition z-10 tracking-widest"
+                  className="absolute left-10 text-black text-xl hover:opacity-40 transition z-10"
                   onClick={() => setSelectedImage(selectedImage - 1)}
                 >
                   ←
@@ -167,7 +228,7 @@ export default function GalleryPage() {
 
               {selectedImage < images.length - 1 && (
                 <button
-                  className="absolute right-10 text-black text-xl hover:opacity-40 transition z-10 tracking-widest"
+                  className="absolute right-10 text-black text-xl hover:opacity-40 transition z-10"
                   onClick={() => setSelectedImage(selectedImage + 1)}
                 >
                   →
@@ -175,7 +236,6 @@ export default function GalleryPage() {
               )}
             </div>
 
-            {/* Lightbox Footer */}
             <div className="px-10 py-6 flex-shrink-0">
               <p className="text-xs tracking-widest text-gray-400 text-center">
                 ← → ARROW KEYS TO NAVIGATE · ESC TO CLOSE

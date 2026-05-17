@@ -2,6 +2,14 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+
+const menuItems = [
+  { label: 'Galleries', href: '/galleries' },
+  { label: 'Prints', href: '/prints' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
+];
 
 const prints = [
   { id: 1,  title: 'Untitled I',     category: 'Street',        price12x16: 5000,  price16x24: 10000 },
@@ -30,14 +38,15 @@ type PrintSize = '12x16' | '16x24';
 type Finish = 'Matte' | 'Glossy';
 
 export default function PrintsPage() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const [selected, setSelected] = useState<typeof prints[0] | null>(null);
   const [selectedSize, setSelectedSize] = useState<PrintSize>('12x16');
   const [selectedFinish, setSelectedFinish] = useState<Finish>('Matte');
 
   useEffect(() => {
-    document.body.style.overflow = selected ? 'hidden' : '';
+    document.body.style.overflow = (selected || menuOpen) ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
-  }, [selected]);
+  }, [selected, menuOpen]);
 
   const getPrice = (print: typeof prints[0]) =>
     selectedSize === '12x16' ? print.price12x16 : print.price16x24;
@@ -53,11 +62,67 @@ export default function PrintsPage() {
           <Link href="/" className="text-xl tracking-widest text-black font-light hover:opacity-40 transition">
             NHNURSHED
           </Link>
-          <Link href="/" className="text-xl tracking-widest text-black font-light hover:opacity-40 transition">
-            HOME
-          </Link>
+          <button
+            onClick={() => setMenuOpen(true)}
+            className="text-xl tracking-widest text-black font-light hover:opacity-40 transition"
+          >
+            MENU
+          </button>
         </div>
       </nav>
+
+      {/* Full Screen Menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 bg-white z-50 flex flex-col"
+          >
+            <div className="flex justify-between items-center px-10 py-6">
+              <Link href="/" className="text-xl tracking-widest text-black font-light hover:opacity-40 transition">
+                NHNURSHED
+              </Link>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="text-xl tracking-widest text-black font-light hover:opacity-40 transition"
+              >
+                CLOSE  ✕
+              </button>
+            </div>
+
+            <div className="flex-1 flex flex-col items-center justify-center gap-1">
+              {menuItems.map((item, index) => (
+                <motion.div
+                  key={item.href}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.07 }}
+                >
+                  <Link
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="block text-6xl md:text-8xl font-light text-black hover:italic transition-all duration-200 text-center py-2 px-6"
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="px-10 py-6 flex justify-between items-center">
+              <div className="flex gap-8 text-xs tracking-widest text-gray-600">
+                <a href="https://www.instagram.com/nhnurshed_" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">INSTAGRAM</a>
+                <a href="https://www.facebook.com/nurehabib.nurshed" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">FACEBOOK</a>
+                <a href="https://flickr.com/photos/159417255@N08" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">FLICKR</a>
+              </div>
+              <p className="text-xs tracking-widest text-gray-600">DHAKA, BANGLADESH</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Page Title */}
       <section className="px-10 pt-12 pb-16">
@@ -68,24 +133,16 @@ export default function PrintsPage() {
         </p>
       </section>
 
-      {/* Prints Grid — same as gallery */}
+      {/* Prints Grid */}
       <section className="px-16 pb-40">
         <div className="grid md:grid-cols-2 gap-x-16 gap-y-24">
           {prints.map((print) => (
             <div
               key={print.id}
-              onClick={() => {
-                setSelected(print);
-                setSelectedSize('12x16');
-                setSelectedFinish('Matte');
-              }}
+              onClick={() => { setSelected(print); setSelectedSize('12x16'); setSelectedFinish('Matte'); }}
               className="group cursor-pointer"
             >
-              {/* Photo with wall breathing room */}
-              <div
-                className="bg-gray-50 p-10 md:p-14 flex items-center justify-center mb-6"
-                style={{ minHeight: '400px' }}
-              >
+              <div className="bg-gray-50 p-10 md:p-14 flex items-center justify-center mb-6" style={{ minHeight: '400px' }}>
                 <img
                   src={`/photos/prints/${print.id}.jpg`}
                   alt={print.title}
@@ -95,21 +152,16 @@ export default function PrintsPage() {
               <h3 className="text-lg font-light text-black tracking-wide mb-1 group-hover:italic transition-all">
                 {print.title}
               </h3>
-              <p className="text-sm text-gray-500">
-                from {print.price12x16.toLocaleString()} BDT
-              </p>
+              <p className="text-sm text-gray-500">from {print.price12x16.toLocaleString()} BDT</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Print Detail — same lightbox style as gallery */}
+      {/* Print Detail */}
       {selected && (
         <div className="fixed inset-0 bg-white z-50 flex flex-col md:flex-row overflow-y-auto">
-
-          {/* Image Side — wall feeling */}
-          <div className="md:w-3/5 bg-gray-50 flex items-center justify-center p-16 md:p-24"
-            style={{ minHeight: '50vh' }}>
+          <div className="md:w-3/5 bg-gray-50 flex items-center justify-center p-16 md:p-24" style={{ minHeight: '50vh' }}>
             <img
               src={`/photos/prints/${selected.id}.jpg`}
               alt={selected.title}
@@ -118,45 +170,24 @@ export default function PrintsPage() {
             />
           </div>
 
-          {/* Details Side */}
           <div className="md:w-2/5 px-12 py-12 overflow-y-auto flex flex-col">
-
-            {/* Close */}
             <div className="flex justify-between items-center mb-12">
-              <p className="text-xs tracking-widest text-gray-400">
-                PRINT {String(selected.id).padStart(2, '0')} OF 20
-              </p>
-              <button
-                onClick={() => setSelected(null)}
-                className="text-sm tracking-widest text-black hover:opacity-40 transition"
-              >
+              <p className="text-xs tracking-widest text-gray-400">PRINT {String(selected.id).padStart(2, '0')} OF 20</p>
+              <button onClick={() => setSelected(null)} className="text-sm tracking-widest text-black hover:opacity-40 transition">
                 CLOSE  ✕
               </button>
             </div>
 
-            {/* Title */}
             <h2 className="text-4xl font-light text-black mb-2">{selected.title}</h2>
-            <p className="text-sm tracking-widest text-gray-500 mb-12">
-              {selected.category.toUpperCase()} · ARCHIVAL PRINT
-            </p>
+            <p className="text-sm tracking-widest text-gray-500 mb-12">{selected.category.toUpperCase()} · ARCHIVAL PRINT</p>
 
-            {/* Size Selector */}
             <div className="mb-8">
               <p className="text-xs tracking-widest text-gray-500 mb-4">SELECT SIZE</p>
               <div className="grid grid-cols-2 gap-3">
                 {(['12x16', '16x24'] as PrintSize[]).map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`py-4 px-4 text-left transition ${
-                      selectedSize === size
-                        ? 'bg-black text-white'
-                        : 'bg-gray-100 text-black hover:bg-gray-200'
-                    }`}
-                  >
-                    <p className="text-sm font-light mb-1">
-                      {size === '12x16' ? '12 × 16 inch' : '16 × 24 inch'}
-                    </p>
+                  <button key={size} onClick={() => setSelectedSize(size)}
+                    className={`py-4 px-4 text-left transition ${selectedSize === size ? 'bg-black text-white' : 'bg-gray-100 text-black hover:bg-gray-200'}`}>
+                    <p className="text-sm font-light mb-1">{size === '12x16' ? '12 × 16 inch' : '16 × 24 inch'}</p>
                     <p className={`text-xs ${selectedSize === size ? 'text-gray-400' : 'text-gray-500'}`}>
                       {size === '12x16' ? '30 × 40 cm' : '40 × 60 cm'}
                     </p>
@@ -165,38 +196,24 @@ export default function PrintsPage() {
               </div>
             </div>
 
-            {/* Finish Selector */}
             <div className="mb-10">
               <p className="text-xs tracking-widest text-gray-500 mb-4">SELECT FINISH</p>
               <div className="grid grid-cols-2 gap-3">
                 {(['Matte', 'Glossy'] as Finish[]).map((finish) => (
-                  <button
-                    key={finish}
-                    onClick={() => setSelectedFinish(finish)}
-                    className={`py-4 text-sm font-light transition ${
-                      selectedFinish === finish
-                        ? 'bg-black text-white'
-                        : 'bg-gray-100 text-black hover:bg-gray-200'
-                    }`}
-                  >
+                  <button key={finish} onClick={() => setSelectedFinish(finish)}
+                    className={`py-4 text-sm font-light transition ${selectedFinish === finish ? 'bg-black text-white' : 'bg-gray-100 text-black hover:bg-gray-200'}`}>
                     {finish}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Price */}
             <div className="py-6 mb-8 bg-gray-50 px-6">
               <p className="text-xs tracking-widest text-gray-500 mb-2">PRICE</p>
-              <p className="text-4xl font-light text-black">
-                {getPrice(selected).toLocaleString()} BDT
-              </p>
-              <p className="text-sm text-gray-500 mt-1">
-                ≈ ${getUSD(getPrice(selected))} USD
-              </p>
+              <p className="text-4xl font-light text-black">{getPrice(selected).toLocaleString()} BDT</p>
+              <p className="text-sm text-gray-500 mt-1">≈ ${getUSD(getPrice(selected))} USD</p>
             </div>
 
-            {/* Contact Button */}
             <a
               href={`mailto:nhnurshed@gmail.com?subject=Print Order: ${selected.title}&body=Hi Nurshed,%0D%0A%0D%0AI would like to order a print:%0D%0A%0D%0ATitle: ${selected.title}%0D%0ASize: ${selectedSize === '12x16' ? '12x16 inch' : '16x24 inch'}%0D%0AFinish: ${selectedFinish}%0D%0APrice: ${getPrice(selected).toLocaleString()} BDT%0D%0A%0D%0AName:%0D%0APhone:%0D%0ADelivery Address:%0D%0A%0D%0AThank you!`}
               className="block w-full text-center bg-black text-white px-6 py-5 hover:bg-gray-800 transition text-sm tracking-widest mb-4"
@@ -205,39 +222,24 @@ export default function PrintsPage() {
             </a>
 
             <p className="text-xs text-gray-400 text-center mb-10">
-              After contacting, you will receive payment and delivery details.
-              Prints are shipped within 7–10 business days.
+              After contacting, you will receive payment and delivery details. Prints shipped within 7–10 business days.
             </p>
 
-            {/* Print Specs */}
             <div className="space-y-3 text-xs pt-6 mt-auto border-t border-gray-100">
-              <div className="flex justify-between text-gray-500">
-                <span>PAPER</span><span>Premium Archival 280gsm</span>
-              </div>
-              <div className="flex justify-between text-gray-500">
-                <span>INK</span><span>Pigment-based archival</span>
-              </div>
-              <div className="flex justify-between text-gray-500">
-                <span>EDITION</span><span>Limited to 50</span>
-              </div>
-              <div className="flex justify-between text-gray-500">
-                <span>SIGNED</span><span>Hand-signed by artist</span>
-              </div>
-              <div className="flex justify-between text-gray-500">
-                <span>DELIVERY</span><span>Bangladesh only</span>
-              </div>
+              <div className="flex justify-between text-gray-500"><span>PAPER</span><span>Premium Archival 280gsm</span></div>
+              <div className="flex justify-between text-gray-500"><span>INK</span><span>Pigment-based archival</span></div>
+              <div className="flex justify-between text-gray-500"><span>EDITION</span><span>Limited to 50</span></div>
+              <div className="flex justify-between text-gray-500"><span>SIGNED</span><span>Hand-signed by artist</span></div>
+              <div className="flex justify-between text-gray-500"><span>DELIVERY</span><span>Bangladesh only</span></div>
             </div>
-
           </div>
         </div>
       )}
 
-      {/* Footer */}
       <footer className="px-10 py-8 flex justify-between items-center text-xs tracking-widest text-gray-400">
         <p>© 2026 NHNURSHED · ALL PRINTS HAND-SIGNED</p>
         <Link href="/contact" className="hover:text-black transition">CONTACT ↗</Link>
       </footer>
-
     </main>
   );
 }
